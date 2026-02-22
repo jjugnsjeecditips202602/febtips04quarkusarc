@@ -1,5 +1,10 @@
 package io.github.futokiyo.febtips04quarkusarc;
 
+import io.github.futokiyo.febtips04quarkusarc.sample.DpndntSampleForApplicationScopedInjection;
+import io.github.futokiyo.febtips04quarkusarc.sample.RqstSampleForDynamicLookup;
+import io.github.futokiyo.febtips04quarkusarc.sample.RqstSampleForInjection;
+import io.github.futokiyo.febtips04quarkusarc.sample.Sample;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -10,17 +15,36 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Path("/rest4quarkusarc")
+@ApplicationScoped
 public class GreetingResource {
 
+    private static Logger logger = LoggerFactory.getLogger(GreetingResource.class);
+
+    @Inject
     private Aiueo aiueo;
 
     @Inject
-    public GreetingResource(Aiueo aiueo){
-        this.aiueo = aiueo;
+    private RqstSampleForInjection rqstSampleForInjection;
+
+    @Inject
+    private RqstSampleForDynamicLookup rqstSampleForDynamicLookupByInjection;
+
+    @Inject
+    private DpndntSampleForApplicationScopedInjection dpndntSampleForAppInjcton;
+
+
+    public GreetingResource(){
+
     }
 
     @GET
@@ -73,6 +97,52 @@ public class GreetingResource {
         return returningSb.toString();
     }
 
+    @GET
+    @Path("/rqst")
+    @Produces(MediaType.TEXT_HTML)
+    public String getRqst() {
+        RqstSampleForDynamicLookup rqstSampleForDynamicLookup = CDI.current().select(RqstSampleForDynamicLookup.class).get();
+        StringBuilder returningSb = new StringBuilder("<html><body>");
+        returningSb.append("<p>RequestScoped Object (CDI.current().select(RqstSampleForDynamicLookup.class).get()) rqstSampleForDynamicLookup.idUuid:")
+                .append(rqstSampleForDynamicLookup.getIdentificationUuid())
+                .append("</p><br />");
+
+        if(rqstSampleForDynamicLookup==this.rqstSampleForDynamicLookupByInjection
+                && rqstSampleForDynamicLookup.getIdentificationUuid().equals(this.rqstSampleForDynamicLookupByInjection.getIdentificationUuid())
+                && rqstSampleForDynamicLookup.getWeight().equals(this.rqstSampleForDynamicLookupByInjection.getWeight())){
+            returningSb.append("<p>rqstSampleForDynamicLookup equals rqstSampleForDynamicLookupByInjection</p>");
+        }
+
+        returningSb.append("<br />")
+                .append(String.format( "<p>rqstSampleForInjection:idUuid:%1$s -> injectedDpndntSampleUuid:%2$s.</p><br />" , rqstSampleForInjection.getIdentificationUuid() , rqstSampleForInjection.getIdUuidOfDpndntSampleForRInjcton() ))
+                .append("<p>DpndntSampleForApplicationScopedInjection.idUuid:")
+                .append(this.dpndntSampleForAppInjcton.getIdentificationUuid())
+                .append("</p><br />");
+
+        returningSb.append(generateMemoryUsage())
+                .append("<br />");
+        returningSb.append("</body></html>");
+        return returningSb.toString();
+    }
+
+    @GET
+    @Path("/dpndnt")
+    @Produces(MediaType.TEXT_HTML)
+    public String getDpndnt() {
+        Sample sample = CDI.current().select(Sample.class).get();
+
+        StringBuilder returningSb = new StringBuilder("<html><body>");
+        returningSb.append("<p>Dependent Object (CDI.current().select(Sample.class).get()) sample.idUuid:")
+                .append(sample.getIdentificationUuid())
+                .append("</p><br />");
+
+
+
+        returningSb.append(generateMemoryUsage())
+                .append("<br />");
+
+        return returningSb.toString();
+    }
 
     @GET
     @Path("/memoryusage")
