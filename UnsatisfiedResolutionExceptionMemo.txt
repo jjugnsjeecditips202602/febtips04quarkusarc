@@ -1,0 +1,80 @@
+curl -w "\n" http://localhost:8080/hello
+
+500 - Internal Server Error
+---------------------------
+
+Details:
+        Error id e37b7468-943e-4cba-ba33-b97e9cb0c339-1, jakarta.enterprise.inject.UnsatisfiedResolutionException: No bean found for required type [class io.github.futokiyo.febtips04quarkusarc.Aiueo] and qualifiers [[]]
+Decorate (Source code):
+        Exception in GreetingResource.java:15
+          13      @Produces(MediaType.TEXT_PLAIN)
+          14      public String hello() {
+        → 15          Aiueo aiueo = CDI.current().select(Aiueo.class).get();
+          16          System.out.println(aiueo.irohani());
+          17          return "Hello from Quarkus REST";
+Stack:
+        jakarta.enterprise.inject.UnsatisfiedResolutionException: No bean found for required type [class io.github.futokiyo.febtips04quarkusarc.Aiueo] and qualifiers [[]]
+        at io.quarkus.arc.impl.InstanceImpl.bean(InstanceImpl.java:288)
+        at io.quarkus.arc.impl.InstanceImpl.getInternal(InstanceImpl.java:309)
+        at io.quarkus.arc.impl.InstanceImpl.get(InstanceImpl.java:190)
+        at io.github.futokiyo.febtips04quarkusarc.HelloTips04QuarkusArcResource.hello(GreetingResource.java:15)
+        at io.github.futokiyo.febtips04quarkusarc.HelloTips04QuarkusArcResource$quarkusrestinvoker$hello_df324e1539083188359af68039a7afafb7b77cdb.invoke(Unknown Source)
+        at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+        at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
+        at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+        at io.quarkus.vertx.core.runtime.VertxCoreRecorder$15.runWith(VertxCoreRecorder.java:666)
+        at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+        at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+        at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+        at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+        at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:11)
+        at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:11)
+        at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+        at java.base/java.lang.Thread.run(Thread.java:840)
+
+
+
+
+
+http://localhost:8080/rest4quarkusarc/dpndnt
+
+2026-02-22 17:15:54,831 WARN  [io.quarkus.arc.impl] (executor-thread-1)
+================================================================================
+CDI: programmatic lookup problem detected
+-----------------------------------------
+At least one bean matched the required type and qualifiers but was marked as unused and removed during build
+
+Stack frame: io.github.futokiyo.febtips04quarkusarc.HelloTips04QuarkusArcResource.getDpndnt(GreetingResource.java:128)
+Required type: class io.github.futokiyo.febtips04quarkusarc.sample.Sample
+Required qualifiers: []
+Removed beans:
+        - CLASS bean  [types=[class io.github.futokiyo.febtips04quarkusarc.sample.Sample, interface java.io.Serializable], qualifiers=null]
+Solutions:
+        - Application developers can eliminate false positives via the @Unremovable annotation
+        - Extensions can eliminate false positives via build items, e.g. using the UnremovableBeanBuildItem
+        - See also https://quarkus.io/guides/cdi-reference#remove_unused_beans
+        - Enable the DEBUG log level to see the full stack trace
+================================================================================
+
+
+2026-02-22 17:15:54,854 ERROR [io.quarkus.vertx.http.runtime.QuarkusErrorHandler] (executor-thread-1) HTTP Request to /rest4quarkusarc/dpndnt failed, error id: ff72a136-a2f2-4252-ad71-0575a8404f58-1: jakarta.enterprise.inject.UnsatisfiedResolutionException: No bean found for required type [class io.github.futokiyo.febtips04quarkusarc.sample.Sample] and qualifiers [[]]
+        at io.quarkus.arc.impl.InstanceImpl.bean(InstanceImpl.java:288)
+        at io.quarkus.arc.impl.InstanceImpl.getInternal(InstanceImpl.java:309)
+        at io.quarkus.arc.impl.InstanceImpl.get(InstanceImpl.java:190)
+        at io.github.futokiyo.febtips04quarkusarc.HelloTips04QuarkusArcResource.getDpndnt(GreetingResource.java:128)
+        at io.github.futokiyo.febtips04quarkusarc.GreetingResource_ClientProxy.getDpndnt(Unknown Source)
+        at io.github.futokiyo.febtips04quarkusarc.HelloTips04QuarkusArcResource$quarkusrestinvoker$getDpndnt_26a406b23980a8527cf9bb34a9d575759f08c8fe.invoke(Unknown Source)
+        at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+        at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:190)
+        at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+        at io.quarkus.vertx.core.runtime.VertxCoreRecorder$15.runWith(VertxCoreRecorder.java:666)
+        at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+        at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+        at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+        at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+        at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:11)
+        at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:11)
+        at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+        at java.base/java.lang.Thread.run(Thread.java:840)
+        
+        

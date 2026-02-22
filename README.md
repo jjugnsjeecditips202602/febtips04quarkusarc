@@ -1,4 +1,17 @@
+# Quarkusコマンドラインインターフェースのインストール
+
+[Quarkus コマンドラインインターフェイス (CLI) を使用した Quarkus アプリの構築](https://ja.quarkus.io/guides/cli-tooling)
+
+WindowsのPowerShellでインストールするコマンド
+
+```
+iex "& { $(iwr https://ps.jbang.dev) } trust add https://repo1.maven.org/maven2/io/quarkus/quarkus-cli/"
+iex "& { $(iwr https://ps.jbang.dev) } app install --fresh --force quarkus@quarkusio"
+```
+
 # getting-started
+
+https://ja.quarkus.io/guides/getting-started
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -64,3 +77,30 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+Hellow World
+```
+curl -w "\n" http://localhost:8080/rest4quarkusarc/hello
+```
+
+ブラウザに次のURLを打ち込む
+
+http://localhost:8080/rest4quarkusarc/beanlist
+
+http://localhost:8080/rest4quarkusarc/memoryusage
+
+http://localhost:8080/rest4quarkusarc/rqst
+
+http://localhost:8080/rest4quarkusarc/dpndnt
+
+Quarkus ArCのdestroyは具体的に何をしているのか？調査できるならば、する方が良い。
+
+https://github.com/quarkusio/quarkus/blob/main/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/InstanceImpl.java#L225
+
+ArCのCreationalContextImplにもdependentInstancesというフィールドがある。
+
+https://github.com/quarkusio/quarkus/blob/main/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/CreationalContextImpl.java
+
+
+

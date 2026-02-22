@@ -15,9 +15,11 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.enterprise.inject.Instance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +28,9 @@ import java.util.Set;
 
 @Path("/rest4quarkusarc")
 @ApplicationScoped
-public class GreetingResource {
+public class HelloTips04QuarkusArcResource {
 
-    private static Logger logger = LoggerFactory.getLogger(GreetingResource.class);
+    private static Logger logger = LoggerFactory.getLogger(HelloTips04QuarkusArcResource.class);
 
     @Inject
     private Aiueo aiueo;
@@ -43,7 +45,7 @@ public class GreetingResource {
     private DpndntSampleForApplicationScopedInjection dpndntSampleForAppInjcton;
 
 
-    public GreetingResource(){
+    public HelloTips04QuarkusArcResource(){
 
     }
 
@@ -129,7 +131,11 @@ public class GreetingResource {
     @Path("/dpndnt")
     @Produces(MediaType.TEXT_HTML)
     public String getDpndnt() {
-        Sample sample = CDI.current().select(Sample.class).get();
+
+        // Sample sample = CDI.current().select(Sample.class).get();
+        Instance<Sample> instance = CDI.current().select(Sample.class);
+        Sample sample = instance.get();
+        checkDependentInstances(instance);
 
         StringBuilder returningSb = new StringBuilder("<html><body>");
         returningSb.append("<p>Dependent Object (CDI.current().select(Sample.class).get()) sample.idUuid:")
@@ -159,6 +165,51 @@ public class GreetingResource {
         long total = Runtime.getRuntime().totalMemory();
         long free = Runtime.getRuntime().freeMemory();
         return "total:" + (total/(1024*1024)) + "MB, free:" + (free/(1024*1024)) + "MB, usage:" + ((total - free)/(1024*1024)) + "MB";
+    }
+
+    /**
+     * Quarkus ArCもWeld同様に、io.quarkus.arc.impl.InstanceImplオブジェクトが
+     * io.quarkus.arc.impl.CreationalContextImplのdependentInstancesでDependentスコープオブジェクトを参照し続けているかをチェックする必要があるはず。
+     * 但し、Quarkus ArCの場合、どのような条件でdependentInstancesが参照を持つのかがわかっていない。
+     * @param instance
+     */
+    private void checkDependentInstances(Instance instance){
+
+        try{
+            // CDI.current().getClass() -> io.quarkus.arc.impl.ArcCDIProvider$ArcCDI
+            //io.quarkus.arc.impl.ArcCDIProvider
+            //Class innerClazzArcCDI = Class.forName("io.quarkus.arc.impl.ArcCDIProvider$ArcCDI");
+            //Field instanceDelegateField = innerClazzArcCDI.getDeclaredField("instanceDelegate");
+            //instanceDelegateField.setAccessible(true);
+            //jakarta.enterprise.inject.Instance instance = (jakarta.enterprise.inject.Instance) instanceDelegateField.get(CDI.current());
+
+            //System.out.println("instance class : " + instance.getClass().getCanonicalName() ); -> io.quarkus.arc.impl.InstanceImpl
+
+            Field creationalContextField = io.quarkus.arc.impl.InstanceImpl.class.getDeclaredField("creationalContext");
+            creationalContextField.setAccessible(true);
+            io.quarkus.arc.impl.CreationalContextImpl creationalContextImpl = (io.quarkus.arc.impl.CreationalContextImpl) creationalContextField.get(instance);
+
+            System.out.println( "dependentInstancesは" + (creationalContextImpl.hasDependentInstances()?"有り":"無し") );
+
+            if(creationalContextImpl.hasDependentInstances()){
+                Field dependentInstancesField = io.quarkus.arc.impl.CreationalContextImpl.class.getDeclaredField("dependentInstances");
+                dependentInstancesField.setAccessible(true);
+                List<io.quarkus.arc.InstanceHandle<?>> dependentInstances = (List<io.quarkus.arc.InstanceHandle<?>>) dependentInstancesField.get(creationalContextImpl);
+
+                if(dependentInstances == null){
+                    System.out.println("dependentInstances is null");
+                } else {
+                    System.out.println("dependentInstances size : " + dependentInstances.size() );
+                    for(io.quarkus.arc.InstanceHandle instanceHandle : dependentInstances){
+                        Object beanObj = instanceHandle.getBean().get(creationalContextImpl);
+                        System.out.println("★★★ " + beanObj);
+                    }
+                }
+            }
+
+        } catch(NoSuchFieldException|IllegalAccessException e){
+            e.printStackTrace();
+        }
     }
 
 }
