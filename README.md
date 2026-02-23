@@ -9,6 +9,7 @@ iex "& { $(iwr https://ps.jbang.dev) } trust add https://repo1.maven.org/maven2/
 iex "& { $(iwr https://ps.jbang.dev) } app install --fresh --force quarkus@quarkusio"
 ```
 
+<!--
 # getting-started
 
 https://ja.quarkus.io/guides/getting-started
@@ -16,6 +17,17 @@ https://ja.quarkus.io/guides/getting-started
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+-->
+
+# git cloneとビルドの方法
+
+## git clone
+
+当ソースコードをgit cloneで取得する。
+
+```
+git clone https://github.com/jjugnsjeecditips202602/febtips04quarkusarc.git
+```
 
 ## Running the application in dev mode
 
@@ -84,6 +96,8 @@ Hellow World
 curl -w "\n" http://localhost:8080/rest4quarkusarc/hello
 ```
 
+# 動作確認
+
 ブラウザに次のURLを打ち込む
 
 http://localhost:8080/rest4quarkusarc/beanlist
@@ -93,6 +107,9 @@ http://localhost:8080/rest4quarkusarc/memoryusage
 http://localhost:8080/rest4quarkusarc/rqst
 
 http://localhost:8080/rest4quarkusarc/dpndnt
+
+
+# 参考情報
 
 Quarkus ArCのdestroyは具体的に何をしているのか？調査できるならば、する方が良い。
 
